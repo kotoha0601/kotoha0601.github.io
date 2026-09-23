@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --subtext: #64748b;
+      --border: #e2e8f0;
+      --primary: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--primary);
+      padding-left: 8px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 580px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--subtext);
+      margin-bottom: 4px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .slider-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .slider-marks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--subtext);
+    }
+
+    /* 指定項目のみを収める青枠 */
+    .result-box {
+      background: #eff6ff;
+      border: 2px solid #3b82f6;
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: right;
+      border-bottom: 1px solid #bfdbfe;
+    }
+
+    th:first-child, td:first-child {
+      text-align: left;
+    }
+
+    th {
+      background-color: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 600;
+    }
+
+    td {
+      background-color: #ffffff;
+    }
+
+    .diff-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .diff-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .diff-highlight {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 居住期間スライダー -->
+  <div class="card">
+    <div class="card-title">居住期間の設定</div>
+    <div class="slider-container">
+      <div class="slider-header">
+        <span>シミュレーション期間</span>
+        <span class="slider-value"><span id="displayMonths">36</span> ヶ月 （<span id="displayYears">3.0</span> 年）</span>
+      </div>
+      <input type="range" id="months" min="1" max="120" value="36" step="1">
+      <div class="slider-marks">
+        <span>1ヶ月</span>
+        <span>2年 (24)</span>
+        <span>3年 (36)</span>
+        <span>5年 (60)</span>
+        <span>10年 (120)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 条件設定フォーム -->
+  <div class="card">
+    <div class="card-title">条件設定</div>
+    <div class="grid-2">
+      <!-- 物件① -->
+      <div>
+        <div class="form-group">
+          <label for="name1">物件① 名称</label>
+          <input type="text" id="name1" value="西馬込">
+        </div>
+        <div class="form-group">
+          <label for="init1">初期費用 (円)</label>
+          <input type="number" id="init1" value="390800" step="100">
+        </div>
+        <div class="form-group">
+          <label for="rent1">月額家賃・保証料等 (円)</label>
+          <input type="number" id="rent1" value="185840" step="10">
+        </div>
+      </div>
+
+      <!-- 物件② -->
+      <div>
+        <div class="form-group">
+          <label for="name2">物件② 名称</label>
+          <input type="text" id="name2" value="グリーンハイツ">
+        </div>
+        <div class="form-group">
+          <label for="init2">初期費用 (円)</label>
+          <input type="number" id="init2" value="923790" step="100">
+        </div>
+        <div class="form-group">
+          <label for="rent2">月額家賃・共益費等 (円)</label>
+          <input type="number" id="rent2" value="164490" step="10">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 比較結果（青枠内） -->
+  <div class="card">
+    <div class="card-title">比較結果（<span id="resMonthsText">36</span>ヶ月 入居時）</div>
+
+    <div class="result-box">
+      <!-- テーブル表示項目 -->
+      <table>
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th id="thName1">西馬込</th>
+            <th id="thName2">グリーンハイツ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="font-weight: 600;">
+            <td>総支払額</td>
+            <td id="tdTotal1">7,081,040 円</td>
+            <td id="tdTotal2">6,845,430 円</td>
+          </tr>
+          <tr>
+            <td>実質月額負担（総額 ÷ 月数）</td>
+            <td id="tdMonthlyEff1">196,696 円</td>
+            <td id="tdMonthlyEff2">190,151 円</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 差額表示項目 -->
+      <div class="diff-list">
+        <div class="diff-item">
+          <span>実質月額差額（月家賃差 ＋ 月割初期費差）:</span>
+          <span class="diff-highlight" id="effectiveMonthlyDiffText">+ 6,545 円 / 月</span>
+        </div>
+        <div class="diff-item">
+          <span>総支払額 差額（① − ②）:</span>
+          <span class="diff-highlight" id="totalDiffText">+ 235,610 円</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const inputs = {
+    months: document.getElementById('months'),
+    name1: document.getElementById('name1'),
+    init1: document.getElementById('init1'),
+    rent1: document.getElementById('rent1'),
+    name2: document.getElementById('name2'),
+    init2: document.getElementById('init2'),
+    rent2: document.getElementById('rent2')
+  };
+
+  const displays = {
+    months: document.getElementById('displayMonths'),
+    years: document.getElementById('displayYears'),
+    resMonthsText: document.getElementById('resMonthsText'),
+    effectiveMonthlyDiffText: document.getElementById('effectiveMonthlyDiffText'),
+    totalDiffText: document.getElementById('totalDiffText'),
+    thName1: document.getElementById('thName1'),
+    thName2: document.getElementById('thName2'),
+    tdTotal1: document.getElementById('tdTotal1'),
+    tdTotal2: document.getElementById('tdTotal2'),
+    tdMonthlyEff1: document.getElementById('tdMonthlyEff1'),
+    tdMonthlyEff2: document.getElementById('tdMonthlyEff2')
+  };
+
+  function fmt(num, withSign = false) {
+    const rounded = Math.round(num);
+    const absStr = Math.abs(rounded).toLocaleString('ja-JP');
+    if (withSign) {
+      if (rounded > 0) return `+ ${absStr}`;
+      if (rounded < 0) return `▲ ${absStr}`;
+      return `0`;
+    }
+    return absStr;
+  }
+
+  function calculate() {
+    const m = parseInt(inputs.months.value, 10) || 1;
+    const n1 = inputs.name1.value || '物件①';
+    const n2 = inputs.name2.value || '物件②';
+    const i1 = parseFloat(inputs.init1.value) || 0;
+    const r1 = parseFloat(inputs.rent1.value) || 0;
+    const i2 = parseFloat(inputs.init2.value) || 0;
+    const r2 = parseFloat(inputs.rent2.value) || 0;
+
+    displays.months.textContent = m;
+    displays.years.textContent = (m / 12).toFixed(1);
+    displays.resMonthsText.textContent = m;
+
+    displays.thName1.textContent = n1;
+    displays.thName2.textContent = n2;
+
+    const initDiff = i1 - i2;
+    const initMonthlyDiff = initDiff / m;
+    const rentDiff = r1 - r2;
+    const effectiveMonthlyDiff = rentDiff + initMonthlyDiff;
+
+    const total1 = i1 + (r1 * m);
+    const total2 = i2 + (r2 * m);
+    const totalDiff = total1 - total2;
+
+    displays.tdTotal1.textContent = `${fmt(total1)} 円`;
+    displays.tdTotal2.textContent = `${fmt(total2)} 円`;
+    displays.tdMonthlyEff1.textContent = `${fmt(total1 / m)} 円`;
+    displays.tdMonthlyEff2.textContent = `${fmt(total2 / m)} 円`;
+
+    displays.effectiveMonthlyDiffText.textContent = `${fmt(effectiveMonthlyDiff, true)} 円 / 月`;
+    displays.totalDiffText.textContent = `${fmt(totalDiff, true)} 円`;
+  }
+
+  Object.values(inputs).forEach(input => {
+    input.addEventListener('input', calculate);
+  });
+
+  calculate();
+</script>
+
+</body>
+</html>
