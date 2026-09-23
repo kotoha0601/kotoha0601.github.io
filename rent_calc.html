@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>賃貸コスト比較シミュレーター</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -11,7 +12,6 @@
       --subtext: #64748b;
       --border: #e2e8f0;
       --primary: #3b82f6;
-      --accent: #059669;
     }
 
     * {
@@ -121,45 +121,25 @@
       color: var(--subtext);
     }
 
+    /* 指定項目のみを収める青枠 */
     .result-box {
       background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 8px;
+      border: 2px solid #3b82f6;
+      border-radius: 10px;
       padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-    }
-
-    .result-row:last-child {
-      margin-bottom: 0;
-      padding-top: 8px;
-      border-top: 1px dashed #bfdbfe;
-    }
-
-    .result-highlight {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
-      margin-top: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
     }
 
     th, td {
       padding: 10px 12px;
       text-align: right;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid #bfdbfe;
     }
 
     th:first-child, td:first-child {
@@ -167,17 +147,41 @@
     }
 
     th {
-      background-color: #f1f5f9;
-      color: var(--subtext);
+      background-color: #dbeafe;
+      color: #1e3a8a;
       font-weight: 600;
+    }
+
+    td {
+      background-color: #ffffff;
+    }
+
+    .diff-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .diff-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .diff-highlight {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
     }
   </style>
 </head>
 <body>
 
 <div class="container">
+  <h1>賃貸コスト比較シミュレーター</h1>
 
-  <!-- 入居期間スライダー -->
+  <!-- 居住期間スライダー -->
   <div class="card">
     <div class="card-title">居住期間の設定</div>
     <div class="slider-container">
@@ -234,70 +238,50 @@
     </div>
   </div>
 
-  <!-- 計算結果 -->
+  <!-- 比較結果（青枠内） -->
   <div class="card">
     <div class="card-title">比較結果（<span id="resMonthsText">36</span>ヶ月 入居時）</div>
 
     <div class="result-box">
-      <div class="result-row">
-        <span>初期費用の差額（① − ②）:</span>
-        <span id="initDiffText">▲ 532,990 円</span>
-      </div>
-      <div class="result-row">
-        <span>月割初期費用 差額:</span>
-        <span id="initMonthlyDiffText">▲ 14,805 円 / 月</span>
-      </div>
-      <div class="result-row">
-        <span>月額家賃 差額（① − ②）:</span>
-        <span id="rentDiffText">+ 21,350 円 / 月</span>
-      </div>
-      <div class="result-row">
-        <span>実質月額差額（月家賃差 ＋ 月割初期費差）:</span>
-        <span class="result-highlight" id="effectiveMonthlyDiffText">+ 6,545 円 / 月</span>
-      </div>
-      <div class="result-row">
-        <span>総支払額 差額（① − ②）:</span>
-        <span class="result-highlight" id="totalDiffText">+ 235,610 円</span>
+      <!-- テーブル表示項目 -->
+      <table>
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th id="thName1">西馬込</th>
+            <th id="thName2">グリーンハイツ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="font-weight: 600;">
+            <td>総支払額</td>
+            <td id="tdTotal1">7,081,040 円</td>
+            <td id="tdTotal2">6,845,430 円</td>
+          </tr>
+          <tr>
+            <td>実質月額負担（総額 ÷ 月数）</td>
+            <td id="tdMonthlyEff1">196,696 円</td>
+            <td id="tdMonthlyEff2">190,151 円</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 差額表示項目 -->
+      <div class="diff-list">
+        <div class="diff-item">
+          <span>実質月額差額（月家賃差 ＋ 月割初期費差）:</span>
+          <span class="diff-highlight" id="effectiveMonthlyDiffText">+ 6,545 円 / 月</span>
+        </div>
+        <div class="diff-item">
+          <span>総支払額 差額（① − ②）:</span>
+          <span class="diff-highlight" id="totalDiffText">+ 235,610 円</span>
+        </div>
       </div>
     </div>
-
-    <!-- 内訳テーブル -->
-    <table>
-      <thead>
-        <tr>
-          <th>項目</th>
-          <th id="thName1">西馬込</th>
-          <th id="thName2">グリーンハイツ</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>初期費用</td>
-          <td id="tdInit1">390,800 円</td>
-          <td id="tdInit2">923,790 円</td>
-        </tr>
-        <tr>
-          <td>家賃合計（月額 × 月数）</td>
-          <td id="tdRentTotal1">6,690,240 円</td>
-          <td id="tdRentTotal2">5,921,640 円</td>
-        </tr>
-        <tr style="font-weight: 600; background-color: #f8fafc;">
-          <td>総支払額</td>
-          <td id="tdTotal1">7,081,040 円</td>
-          <td id="tdTotal2">6,845,430 円</td>
-        </tr>
-        <tr>
-          <td>実質月額負担（総額 ÷ 月数）</td>
-          <td id="tdMonthlyEff1">196,696 円</td>
-          <td id="tdMonthlyEff2">190,151 円</td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </div>
 
 <script>
-  // DOM要素取得
   const inputs = {
     months: document.getElementById('months'),
     name1: document.getElementById('name1'),
@@ -312,17 +296,10 @@
     months: document.getElementById('displayMonths'),
     years: document.getElementById('displayYears'),
     resMonthsText: document.getElementById('resMonthsText'),
-    initDiffText: document.getElementById('initDiffText'),
-    initMonthlyDiffText: document.getElementById('initMonthlyDiffText'),
-    rentDiffText: document.getElementById('rentDiffText'),
     effectiveMonthlyDiffText: document.getElementById('effectiveMonthlyDiffText'),
     totalDiffText: document.getElementById('totalDiffText'),
     thName1: document.getElementById('thName1'),
     thName2: document.getElementById('thName2'),
-    tdInit1: document.getElementById('tdInit1'),
-    tdInit2: document.getElementById('tdInit2'),
-    tdRentTotal1: document.getElementById('tdRentTotal1'),
-    tdRentTotal2: document.getElementById('tdRentTotal2'),
     tdTotal1: document.getElementById('tdTotal1'),
     tdTotal2: document.getElementById('tdTotal2'),
     tdMonthlyEff1: document.getElementById('tdMonthlyEff1'),
@@ -349,16 +326,13 @@
     const i2 = parseFloat(inputs.init2.value) || 0;
     const r2 = parseFloat(inputs.rent2.value) || 0;
 
-    // スライダーラベル更新
     displays.months.textContent = m;
     displays.years.textContent = (m / 12).toFixed(1);
     displays.resMonthsText.textContent = m;
 
-    // テーブル見出し更新
     displays.thName1.textContent = n1;
     displays.thName2.textContent = n2;
 
-    // 差額計算 (① - ②)
     const initDiff = i1 - i2;
     const initMonthlyDiff = initDiff / m;
     const rentDiff = r1 - r2;
@@ -368,30 +342,19 @@
     const total2 = i2 + (r2 * m);
     const totalDiff = total1 - total2;
 
-    // 結果表示の反映
-    displays.initDiffText.textContent = `${fmt(initDiff, true)} 円`;
-    displays.initMonthlyDiffText.textContent = `${fmt(initMonthlyDiff, true)} 円 / 月`;
-    displays.rentDiffText.textContent = `${fmt(rentDiff, true)} 円 / 月`;
-    displays.effectiveMonthlyDiffText.textContent = `${fmt(effectiveMonthlyDiff, true)} 円 / 月`;
-    displays.totalDiffText.textContent = `${fmt(totalDiff, true)} 円`;
-
-    // テーブル内訳の反映
-    displays.tdInit1.textContent = `${fmt(i1)} 円`;
-    displays.tdInit2.textContent = `${fmt(i2)} 円`;
-    displays.tdRentTotal1.textContent = `${fmt(r1 * m)} 円`;
-    displays.tdRentTotal2.textContent = `${fmt(r2 * m)} 円`;
     displays.tdTotal1.textContent = `${fmt(total1)} 円`;
     displays.tdTotal2.textContent = `${fmt(total2)} 円`;
     displays.tdMonthlyEff1.textContent = `${fmt(total1 / m)} 円`;
     displays.tdMonthlyEff2.textContent = `${fmt(total2 / m)} 円`;
+
+    displays.effectiveMonthlyDiffText.textContent = `${fmt(effectiveMonthlyDiff, true)} 円 / 月`;
+    displays.totalDiffText.textContent = `${fmt(totalDiff, true)} 円`;
   }
 
-  // イベントリスナー登録
   Object.values(inputs).forEach(input => {
     input.addEventListener('input', calculate);
   });
 
-  // 初回計算実行
   calculate();
 </script>
 
